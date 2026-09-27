@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tồn Kho">
+
+    <title>Quản Lý Tồn Kho</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px 15px;
+            background: #f2f4f7;
+            font-family: -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", sans-serif;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: #4b5563;
+        }
+
+        select,
+        input {
+            width: 100%;
+            height: 52px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 0 15px;
+            font-size: 18px;
+            background: #fff;
+            color: #111827;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .unit {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .formula {
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 13px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            height: 55px;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+            background: #1d4ed8;
+        }
+
+        .btn-reset {
+            margin-top: 10px;
+            background: #e5e7eb;
+            color: #374151;
+            box-shadow: none;
+        }
+
+        .result {
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #dcfce7;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-size: 16px;
+            color: #374151;
+        }
+
+        .result-value {
+            font-size: 21px;
+            font-weight: 800;
+            color: #15803d;
+        }
+
+        .total {
+            background: #ecfdf5;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .sold {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #c2410c;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .error {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .stock-preview {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+            padding: 10px 0 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📦 QUẢN LÝ TỒN KHO</h1>
+        <p>Thùng → Lốc → Sản phẩm</p>
+    </div>
+
+    <!-- CHỌN LOẠI -->
+    <div class="card">
+        <div class="card-title">📋 Loại hàng</div>
+
+        <label for="type">Chọn loại</label>
+
+        <select id="type" onchange="changeType()">
+            <option value="1">Loại 1 - Cốc</option>
+            <option value="2">Loại 2 - Ốc quế</option>
+        </select>
+
+        <div class="formula" id="formula">
+            1 thùng = 20 lốc &nbsp; | &nbsp; 1 lốc = 50 cốc
+        </div>
+    </div>
+
+
+    <!-- TỒN KHO -->
+    <div class="card">
+
+        <div class="card-title">📦 Nhập tồn kho</div>
+
+        <div class="input-group">
+            <label for="thung">Số lượng thùng</label>
+
+            <input
+                id="thung"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                placeholder="Ví dụ: 2">
+        </div>
+
+
+        <div class="input-group">
+            <label for="loc">Số lượng lốc</label>
+
+            <input
+                id="loc"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                placeholder="Ví dụ: 5">
+        </div>
+
+
+        <div class="input-group">
+            <label id="productLabel" for="sanpham">
+                Số lượng cốc
+            </label>
+
+            <input
+                id="sanpham"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                placeholder="Ví dụ: 30">
+        </div>
+
+
+        <div class="stock-preview">
+            Tồn kho:
+            <strong id="stockPreview">0 - 0 - 0</strong>
+        </div>
+
+    </div>
+
+
+    <!-- BÁN -->
+    <div class="card">
+
+        <div class="card-title">🛒 Số lượng bán</div>
+
+        <div class="input-group">
+
+            <label id="soldLabel" for="sold">
+                Số lượng cốc bán đi
+            </label>
+
+            <input
+                id="sold"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                placeholder="Ví dụ: 120">
+
+        </div>
+
+        <button class="btn" onclick="calculate()">
+            TÍNH TỒN KHO
+        </button>
+
+        <button class="btn btn-reset" onclick="resetForm()">
+            XÓA DỮ LIỆU
+        </button>
+
+    </div>
+
+
+    <!-- LỖI -->
+    <div id="error" class="error"></div>
+
+
+    <!-- KẾT QUẢ -->
+    <div id="result" class="card result">
+
+        <div class="card-title">✅ Kết quả tồn kho</div>
+
+        <div class="sold">
+            Đã bán:
+            <strong id="resultSold">0</strong>
+            <span id="resultSoldUnit">cốc</span>
+        </div>
+
+
+        <div class="result-box">
+
+            <div class="result-row">
+                <span class="result-label">📦 Thùng</span>
+                <span class="result-value" id="resultThung">
+                    0
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">📦 Lốc</span>
+                <span class="result-value" id="resultLoc">
+                    0
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label" id="resultProductLabel">
+                    🥤 Cốc
+                </span>
+
+                <span class="result-value" id="resultProduct">
+                    0
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="total">
+            Tổng tồn:
+            <strong id="resultTotal">0</strong>
+            <span id="resultTotalUnit">cốc</span>
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Quản lý tồn kho
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+     * =========================
+     * CẤU HÌNH CÁC LOẠI
+     * =========================
+     */
+
+    const types = {
+
+        1: {
+            name: "Loại 1",
+            product: "cốc",
+            productCapital: "Cốc",
+            bPerA: 20,
+            cPerB: 50
+        },
+
+        2: {
+            name: "Loại 2",
+            product: "ốc quế",
+            productCapital: "Ốc quế",
+            bPerA: 16,
+            cPerB: 25
+        }
+
+    };
+
+
+    /*
+     * =========================
+     * LẤY LOẠI ĐANG CHỌN
+     * =========================
+     */
+
+    function getType() {
+
+        const selected =
+            document.getElementById("type").value;
+
+        return types[selected];
+
+    }
+
+
+    /*
+     * =========================
+     * ĐỔI LOẠI
+     * =========================
+     */
+
+    function changeType() {
+
+        const type = getType();
+
+        document.getElementById("productLabel")
+            .innerText =
+            "Số lượng " + type.product;
+
+        document.getElementById("soldLabel")
+            .innerText =
+            "Số lượng " + type.product + " bán đi";
+
+        document.getElementById("resultProductLabel")
+            .innerText =
+            "🥤 " + type.productCapital;
+
+        document.getElementById("resultSoldUnit")
+            .innerText =
+            type.product;
+
+        document.getElementById("resultTotalUnit")
+            .innerText =
+            type.product;
+
+
+        document.getElementById("formula")
+            .innerText =
+            "1 thùng = " +
+            type.bPerA +
+            " lốc | 1 lốc = " +
+            type.cPerB +
+            " " +
+            type.product;
+
+
+        updatePreview();
+
+    }
+
+
+    /*
+     * =========================
+     * CẬP NHẬT TỒN NHẬP
+     * =========================
+     */
+
+    function updatePreview() {
+
+        const a =
+            Number(document.getElementById("thung").value) || 0;
+
+        const b =
+            Number(document.getElementById("loc").value) || 0;
+
+        const c =
+            Number(document.getElementById("sanpham").value) || 0;
+
+        document.getElementById("stockPreview")
+            .innerText =
+            a + " - " + b + " - " + c;
+
+    }
+
+
+    /*
+     * =========================
+     * QUY ĐỔI TỒN -> SẢN PHẨM
+     * =========================
+     */
+
+    function stockToProduct(a, b, c, type) {
+
+        const cPerA =
+            type.bPerA * type.cPerB;
+
+        return (
+            a * cPerA +
+            b * type.cPerB +
+            c
+        );
+
+    }
+
+
+    /*
+     * =========================
+     * QUY ĐỔI SẢN PHẨM -> TỒN
+     * =========================
+     */
+
+    function productToStock(total, type) {
+
+        const cPerA =
+            type.bPerA * type.cPerB;
+
+
+        const a =
+            Math.floor(total / cPerA);
+
+
+        const remainder =
+            total % cPerA;
+
+
+        const b =
+            Math.floor(
+                remainder / type.cPerB
+            );
+
+
+        const c =
+            remainder % type.cPerB;
+
+
+        return {
+            a: a,
+            b: b,
+            c: c
+        };
+
+    }
+
+
+    /*
+     * =========================
+     * TÍNH TỒN KHO
+     * =========================
+     */
+
+    function calculate() {
+
+        hideError();
+
+
+        const type = getType();
+
+
+        const a =
+            Number(document.getElementById("thung").value);
+
+
+        const b =
+            Number(document.getElementById("loc").value);
+
+
+        const c =
+            Number(document.getElementById("sanpham").value);
+
+
+        const sold =
+            Number(document.getElementById("sold").value);
+
+
+        /*
+         * KIỂM TRA INPUT
+         */
+
+        if (
+            isNaN(a) ||
+            isNaN(b) ||
+            isNaN(c) ||
+            isNaN(sold)
+        ) {
+
+            showError(
+                "Vui lòng nhập đầy đủ số lượng."
+            );
+
+            return;
+        }
+
+
+        if (
+            a < 0 ||
+            b < 0 ||
+            c < 0 ||
+            sold < 0
+        ) {
+
+            showError(
+                "Số lượng không được nhỏ hơn 0."
+            );
+
+            return;
+        }
+
+
+        /*
+         * TỔNG TỒN
+         */
+
+        const total =
+            stockToProduct(
+                a,
+                b,
+                c,
+                type
+            );
+
+
+        /*
+         * KIỂM TRA BÁN
+         */
+
+        if (sold > total) {
+
+            showError(
+                "Không đủ hàng! " +
+                "Tồn kho chỉ có " +
+                total +
+                " " +
+                type.product +
+                ", nhưng bạn bán " +
+                sold +
+                " " +
+                type.product +
+                "."
+            );
+
+            return;
+        }
+
+
+        /*
+         * TỒN SAU BÁN
+         */
+
+        const remaining =
+            total - sold;
+
+
+        /*
+         * QUY ĐỔI LẠI
+         */
+
+        const result =
+            productToStock(
+                remaining,
+                type
+            );
+
+
+        /*
+         * HIỂN THỊ
+         */
+
+        document.getElementById("resultSold")
+            .innerText = sold;
+
+
+        document.getElementById("resultThung")
+            .innerText = result.a;
+
+
+        document.getElementById("resultLoc")
+            .innerText = result.b;
+
+
+        document.getElementById("resultProduct")
+            .innerText = result.c;
+
+
+        document.getElementById("resultTotal")
+            .innerText = remaining;
+
+
+        document.getElementById("result")
+            .classList.add("show");
+
+
+        /*
+         * CUỘN ĐẾN KẾT QUẢ
+         */
+
+        document.getElementById("result")
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+    }
+
+
+    /*
+     * =========================
+     * XÓA DỮ LIỆU
+     * =========================
+     */
+
+    function resetForm() {
+
+        document.getElementById("thung").value = "";
+        document.getElementById("loc").value = "";
+        document.getElementById("sanpham").value = "";
+        document.getElementById("sold").value = "";
+
+        document.getElementById("stockPreview")
+            .innerText = "0 - 0 - 0";
+
+        document.getElementById("result")
+            .classList.remove("show");
+
+        hideError();
+
+    }
+
+
+    /*
+     * =========================
+     * HIỂN THỊ LỖI
+     * =========================
+     */
+
+    function showError(message) {
+
+        const error =
+            document.getElementById("error");
+
+        error.innerText = "⚠️ " + message;
+
+        error.classList.add("show");
+
+        error.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }
+
+
+    /*
+     * =========================
+     * ẨN LỖI
+     * =========================
+     */
+
+    function hideError() {
+
+        document.getElementById("error")
+            .classList.remove("show");
+
+    }
+
+
+    /*
+     * =========================
+     * CẬP NHẬT KHI NHẬP
+     * =========================
+     */
+
+    document
+        .getElementById("thung")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    document
+        .getElementById("loc")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    document
+        .getElementById("sanpham")
+        .addEventListener(
+            "input",
+            updatePreview
+        );
+
+
+    /*
+     * KHỞI TẠO
+     */
+
+    changeType();
+
+</script>
+
+</body>
+</html>
